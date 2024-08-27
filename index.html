@@ -106,24 +106,28 @@
     <script>
         document.getElementById('generateBtn').addEventListener('click', function () {
             const inspectLink = document.getElementById('inspectLink').value;
-            const steamApiUrl = "https://steamcommunity.com/market/priceoverview/?currency=1&appid=730&market_hash_name=";
             const itemID = extractItemID(inspectLink);
+
             if (!itemID) {
                 alert('Invalid CS:GO inspect link.');
                 return;
             }
 
-            // Assuming we have a way to map the itemID to market_hash_name, 
-            // otherwise, this will require more specific API requests or parsing.
-            fetch(steamApiUrl + itemID)
-                .then(response => response.json())
-                .then(data => {
-                    if (data && data.success) {
-                        const imageUrl = `https://steamcommunity-a.akamaihd.net/economy/image/${itemID}`;
-                        displayImage(imageUrl);
-                    } else {
-                        alert('Failed to retrieve skin image.');
+            // Construct the URL for the image (update this URL based on the actual image source)
+            const imageUrl = `https://example.com/path/to/skin/images/${itemID}.png`;
+
+            // Fetch and display the image
+            fetch(imageUrl)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok.');
                     }
+                    return response.blob();
+                })
+                .then(blob => {
+                    const img = document.getElementById('skinImage');
+                    img.src = URL.createObjectURL(blob);
+                    img.style.display = 'block';
                 })
                 .catch(error => {
                     console.error('Error fetching the skin image:', error);
@@ -135,12 +139,6 @@
             const regex = /%20M(\d+)/;
             const match = link.match(regex);
             return match ? match[1] : null;
-        }
-
-        function displayImage(url) {
-            const img = document.getElementById('skinImage');
-            img.src = url;
-            img.style.display = 'block';
         }
     </script>
 </body>
